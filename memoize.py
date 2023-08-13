@@ -3,15 +3,16 @@ import numpy as np
 from util.pixels import *
 
 THRESHOLD = 100
+prev = []
 
 def make_frame(t, clip):
+  global prev
   current = clip.get_frame(t)
-  time_since_last = 1/clip.fps
 
   if (t == 0):
+    prev = current
     return current
     
-  prev = clip.get_frame(t - (time_since_last * 2))
   frame = []
 
   for y in range(0, clip.h):
@@ -28,7 +29,11 @@ def make_frame(t, clip):
 
     frame.append(row)
 
-  return np.array(frame)
+  prev = np.array(frame)
+  return prev
+
+# 1: 31, 33
+# 2: 176, 178
 
 def main(filename, start=31, end=33):
   duration = end - start
@@ -40,4 +45,4 @@ def main(filename, start=31, end=33):
   output.write_videofile(f'output/memoize_{filename}', fps=fps)
 
 if __name__ == '__main__':
-  main('footage.mp4')
+  main('footage1.mp4')
